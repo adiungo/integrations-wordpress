@@ -1,0 +1,44 @@
+{
+    "name": "adiungo/repository",
+    "description": "Take control of your online identity, and archive all of your online content on their website automatically",
+    "type": "library",
+    "keywords": [
+        "index",
+        "aggregate",
+        "blogging",
+        "social media",
+        "archive"
+    ],
+    "homepage": "https://github.com/adiungo/core",
+    "readme": "README.md",
+    "license": "MIT",
+    "scripts": {
+        "php-cs-fixer": "php-cs-fixer fix"
+    },
+    "autoload": {
+        "psr-4": {
+            "Adiungo\\Core\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Adiungo\\Core\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alex Standiford",
+            "email": "alex@standiford.us"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/adiungo/core/issues",
+        "forum": "https://github.com/adiungo/core/discussions",
+        "wiki": "https://github.com/adiungo/core/wiki",
+        "source": "https://github.com/adiungo/core/releases",
+        "chat": "https://matrix.to/#/#project-adiungo:matrix.org"
+    },
+    "require-dev": {
+        "adiungo/tests": "^0.1.0"
+    }
+}
