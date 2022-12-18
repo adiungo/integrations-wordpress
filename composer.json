@@ -18,8 +18,7 @@
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix",
         "phpstan": "vendor/bin/phpstan analyse lib tests --level=9",
-        "phpunit": " vendor/bin/phpunit --configuration=phpunit.xml",
-        "pc": "composer php-cs-fixer && composer phpstan && composer phpunit"
+        "phpunit": " vendor/bin/phpunit --configuration=phpunit.xml"
     },
     "autoload": {
         "psr-4": {
