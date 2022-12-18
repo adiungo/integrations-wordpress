@@ -45,6 +45,6 @@
         "adiungo/tests": "^0.1.0"
     },
     "require": {
-        "adiungo/core": "^0.1.2"
+        "adiungo/core": "^0.1.3"
     }
 }
