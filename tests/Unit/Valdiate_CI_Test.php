@@ -1,9 +1,9 @@
 <?php
 
-namespace Adiungo\Core\Tests\Unit;
+namespace Adiungo\Integrations\WordPress\Tests\Unit;
 
 
-use Adiungo\Core\Tests\Test_Case;
+use Adiungo\Tests\Test_Case;
 
 class Valdiate_CI_Test extends Test_Case
 {

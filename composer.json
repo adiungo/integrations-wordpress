@@ -1,5 +1,5 @@
 {
-    "name": "adiungo/repository",
+    "name": "adiungo/integrations-core",
     "description": "Take control of your online identity, and archive all of your online content on their website automatically",
     "type": "library",
     "keywords": [
@@ -7,9 +7,12 @@
         "aggregate",
         "blogging",
         "social media",
-        "archive"
+        "archive",
+        "wordpress",
+        "import",
+        "sync"
     ],
-    "homepage": "https://github.com/adiungo/core",
+    "homepage": "https://github.com/adiungo/integrations-wordpress",
     "readme": "README.md",
     "license": "MIT",
     "scripts": {
@@ -17,12 +20,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Adiungo\\Core\\": "lib/"
+            "Adiungo\\Integrations\\WordPress\\": "lib/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Adiungo\\Core\\Tests\\": "tests/"
+            "Adiungo\\Integrations\\WordPress\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -32,13 +35,16 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/adiungo/core/issues",
-        "forum": "https://github.com/adiungo/core/discussions",
-        "wiki": "https://github.com/adiungo/core/wiki",
-        "source": "https://github.com/adiungo/core/releases",
+        "issues": "https://github.com/adiungo/integrations-wordpress/issues",
+        "forum": "https://github.com/adiungo/integrations-wordpress/discussions",
+        "wiki": "https://docs.getadiungo.com/integrations/wordpress",
+        "source": "https://github.com/adiungo/integrations-wordpress/releases",
         "chat": "https://matrix.to/#/#project-adiungo:matrix.org"
     },
     "require-dev": {
         "adiungo/tests": "^0.1.0"
+    },
+    "require": {
+        "adiungo/core": "^0.1.2"
     }
 }
