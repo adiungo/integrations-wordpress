@@ -1,6 +1,6 @@
 <?php
 
-namespace Adiungo\Core\Tests;
+namespace Adiungo\Integrations\WordPress\Tests;
 
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
