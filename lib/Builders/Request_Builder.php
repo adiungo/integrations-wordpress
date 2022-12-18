@@ -6,7 +6,6 @@ use Adiungo\Core\Abstracts\Int_Id_Based_Request_Builder;
 
 class Request_Builder extends Int_Id_Based_Request_Builder
 {
-
     /**
      * {@inheritDoc}
      */

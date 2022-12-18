@@ -18,5 +18,4 @@ class Single_Response_Adapter extends Core_Single_Response_Adapter
 
         return empty($response) ? [] : Array_Helper::wrap($response[0]);
     }
-
 }
