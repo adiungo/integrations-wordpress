@@ -6,7 +6,7 @@ use Adiungo\Core\Factories\Adapters\Data_Source_Adapter;
 use Adiungo\Core\Factories\Data_Sources\CSV;
 use Adiungo\Core\Factories\Index_Strategy;
 
-class Csv_Strategy_Factory
+class CSV_Strategy_Factory
 {
     /**
      * @param string $csv
