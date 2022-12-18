@@ -1,6 +1,6 @@
 <?php
 
-namespace Adiungo\Core\Tests\Unit;
+namespace Adiungo\Integrations\WordPress\Tests\Unit;
 
 
 use Adiungo\Core\Tests\Test_Case;

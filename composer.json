@@ -25,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Adiungo\\Core\\Tests\\": "tests/"
+            "Adiungo\\Integrations\\WordPress\\Tests\\": "tests/"
         }
     },
     "authors": [
