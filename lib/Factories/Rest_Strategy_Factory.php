@@ -2,7 +2,6 @@
 
 namespace Adiungo\Integrations\WordPress\Factories;
 
-
 use Adiungo\Core\Factories\Data_Sources\Rest;
 use Adiungo\Core\Factories\Index_Strategy;
 use Adiungo\Core\Interfaces\Has_Http_Strategy;

@@ -2,7 +2,6 @@
 
 namespace Adiungo\Integrations\WordPress\Tests\Unit\Builders;
 
-
 use Adiungo\Integrations\WordPress\Builders\Batch_Builder;
 use Adiungo\Tests\Test_Case;
 use Adiungo\Tests\Traits\With_Inaccessible_Methods;
@@ -63,5 +62,4 @@ class Batch_Builder_Test extends Test_Case
 
         $this->assertSame($page, $instance->get_page());
     }
-
 }

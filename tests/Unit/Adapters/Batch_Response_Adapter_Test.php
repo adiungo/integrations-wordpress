@@ -2,7 +2,6 @@
 
 namespace Adiungo\Integrations\WordPress\Tests\Unit\Adapters;
 
-
 use Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter;
 use Adiungo\Tests\Test_Case;
 use Generator;
@@ -10,7 +9,6 @@ use Mockery;
 
 class Batch_Response_Adapter_Test extends Test_Case
 {
-
     /**
      * @covers       \Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter::to_array()
      * @dataProvider provider_convert_to_array

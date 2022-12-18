@@ -2,7 +2,6 @@
 
 namespace Adiungo\Integrations\WordPress\Adapters;
 
-
 use Adiungo\Core\Abstracts\Batch_Response_Adapter as Core_Batch_Response_Adapter;
 use Underpin\Helpers\Array_Helper;
 
