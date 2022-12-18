@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Adiungo\\Integrations\\WordPress": "lib/"
+            "Adiungo\\Integrations\\WordPress\\": "lib/"
         }
     },
     "autoload-dev": {
