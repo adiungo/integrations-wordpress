@@ -2,25 +2,29 @@
 
 namespace Adiungo\Integrations\WordPress\Tests\Unit\Builders;
 
+use Adiungo\Integrations\WordPress\Builders\Request_Builder;
 use Adiungo\Tests\Test_Case;
+use Adiungo\Tests\Traits\With_Simple_Setter_Getter_Tests;
+use Generator;
+use Underpin\Factories\Request;
+use Underpin\Factories\Url;
 
 class Request_Builder_Test extends Test_Case
 {
-    /**
-     * @covers \Adiungo\Integrations\WordPress\Builders\Request_Builder::get_id
-     * @return void
-     */
-    public function test_can_get_id()
+    use With_Simple_Setter_Getter_Tests;
+
+    protected object $instance;
+
+    protected function setUp(): void
     {
-        $this->markTestIncomplete();
+        parent::setUp();
+
+        $this->instance = (new Request_Builder())->set_request((new Request())->set_url(Url::from('https://www.example.com')));
     }
 
-    /**
-     * @covers \Adiungo\Integrations\WordPress\Builders\Request_Builder::set_id
-     * @return void
-     */
-    public function test_can_set_id(): void
+    protected function get_setters_and_getters(): Generator
     {
-        $this->markTestIncomplete();
+        yield 'id int' => ['set_id', 'get_id', 123];
+        yield 'id null' => ['set_id', 'get_id', null];
     }
 }
