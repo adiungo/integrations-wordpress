@@ -6,7 +6,6 @@ use Adiungo\Core\Abstracts\Int_Id_Based_Request_Builder;
 use Underpin\Enums\Types;
 use Underpin\Exceptions\Operation_Failed;
 use Underpin\Exceptions\Unknown_Registry_Item;
-use Underpin\Exceptions\Validation_Failed;
 use Underpin\Factories\Registry_Items\Param;
 
 class Request_Builder extends Int_Id_Based_Request_Builder
@@ -17,7 +16,13 @@ class Request_Builder extends Int_Id_Based_Request_Builder
     public function get_id(): ?int
     {
         try {
-            return $this->get_request()->get_url()->get_params()->get('id')->get_value();
+            $result = $this->get_request()->get_url()->get_params()->get('id')->get_value();
+
+            if (!is_int($result)) {
+                return null;
+            }
+
+            return $result;
         } catch (Unknown_Registry_Item $exception) {
             return null;
         }
