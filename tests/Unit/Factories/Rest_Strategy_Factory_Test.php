@@ -7,7 +7,7 @@ use Adiungo\Tests\Test_Case;
 class Rest_Strategy_Factory_Test extends Test_Case
 {
     /**
-     * @covers \Adiungo\Integrations\WordPress\Factories\Rest_Strategy_Factory::get_instance_template
+     * @covers \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::get_instance_template
      * @return void
      */
     public function test_can_get_instance_template(): void
@@ -16,7 +16,7 @@ class Rest_Strategy_Factory_Test extends Test_Case
     }
 
     /**
-     * @covers \Adiungo\Integrations\WordPress\Factories\Rest_Strategy_Factory::build
+     * @covers \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::build
      * @return void
      */
     public function test_can_build(): void
@@ -25,7 +25,7 @@ class Rest_Strategy_Factory_Test extends Test_Case
     }
 
     /**
-     * @covers \Adiungo\Integrations\WordPress\Factories\Rest_Strategy_Factory::build_data_source
+     * @covers \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::build_data_source
      * @return void
      */
     public function test_can_build_data_source(): void
