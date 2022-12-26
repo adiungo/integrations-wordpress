@@ -3,13 +3,18 @@
 namespace Adiungo\Integrations\WordPress\Strategies;
 
 
+use Adiungo\Core\Collections\Attachment_Collection;
 use Adiungo\Core\Collections\Content_Model_Collection;
 use Adiungo\Core\Events\Queue_Index_Event;
+use Adiungo\Core\Factories\Attachments\Image;
 use Adiungo\Core\Factories\Index_Strategy;
 use Adiungo\Core\Factories\Index_Strategy as Index_Strategy_Core;
+use Adiungo\Integrations\WordPress\Adapters\Content_To_Attachment_Collection_Adapter;
 use Adiungo\Integrations\WordPress\Factories\Author_Rest_Strategy_Factory;
 use Adiungo\Integrations\WordPress\Factories\Category_Rest_Strategy_Factory;
+use Adiungo\Integrations\WordPress\Factories\Image_Rest_Strategy_Factory;
 use Adiungo\Integrations\WordPress\Factories\Tag_Rest_Strategy_Factory;
+use Adiungo\Integrations\WordPress\Models\Post;
 use Underpin\Enums\Types;
 use Underpin\Factories\Url;
 use Underpin\Helpers\Array_Helper;
@@ -93,8 +98,17 @@ class Post_Index_Strategy extends Index_Strategy_Core
      */
     protected function index_images(Content_Model_Collection $posts)
     {
-        $featured = Array_Helper::where_not_null($posts->pluck('featured_media', null));
+        $featured = $posts->pluck('featured_media', null);
 
+        $images = $posts
+            ->reduce(function (Attachment_Collection $acc, Post $post) {
+                $acc->merge((new Content_To_Attachment_Collection_Adapter())->set_content($post->get_content())->to_collection());
+
+                return $acc;
+            }, [])
+        (new Image())->set_origin(Url::from('https://www.site.com/attachment-url'));
+
+        Queue_Index_Event::instance()->broadcast((new Image_Rest_Strategy_Factory())->build($this->images_base, $featured, $images));
     }
 
     /**
