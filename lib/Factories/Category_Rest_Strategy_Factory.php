@@ -13,12 +13,15 @@ use Adiungo\Core\Traits\With_Http_Strategy;
 use Adiungo\Core\Traits\With_Index_Strategy;
 use Underpin\Exceptions\Operation_Failed;
 use Underpin\Factories\Url;
+use Underpin\Interfaces\Identifiable_String;
+use Underpin\Traits\With_String_Identity;
 
-class Category_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strategy, Has_Content_Model_Collection
+class Category_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strategy, Has_Content_Model_Collection, Identifiable_String
 {
     use With_Http_Strategy;
     use With_Index_Strategy;
     use With_Content_Model_Collection;
+    use With_String_Identity;
 
     /**
      * Assembles the items specific to this integration that are always the same.

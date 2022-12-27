@@ -6,6 +6,8 @@ use Adiungo\Core\Events\Providers\Index_Strategy_Provider;
 use Adiungo\Core\Events\Queue_Index_Event;
 use Adiungo\Core\Factories\Adapters\Data_Source_Adapter;
 use Adiungo\Core\Factories\Data_Sources\Rest;
+use Adiungo\Core\Factories\Index_Strategy;
+use Adiungo\Core\Factories\Updated_Date_Strategy;
 use Adiungo\Core\Interfaces\Has_Http_Strategy;
 use Adiungo\Core\Interfaces\Has_Index_Strategy;
 use Adiungo\Core\Traits\With_Http_Strategy;
@@ -14,8 +16,8 @@ use Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter;
 use Adiungo\Integrations\WordPress\Adapters\Single_Response_Adapter;
 use Adiungo\Integrations\WordPress\Builders\Batch_Builder;
 use Adiungo\Integrations\WordPress\Builders\Request_Builder;
+use Adiungo\Integrations\WordPress\Listeners\Index_Post_Categories_Listener;
 use Adiungo\Integrations\WordPress\Models\Post;
-use Adiungo\Integrations\WordPress\Strategies\Post_Index_Strategy;
 use DateTime;
 use Underpin\Exceptions\Operation_Failed;
 use Underpin\Factories\Url;
@@ -26,6 +28,10 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
     use With_Http_Strategy;
     use With_Object_Cache;
     use With_Index_Strategy;
+
+    public function __construct(protected string $id)
+    {
+    }
 
     /**
      * Assembles the items specific to this integration that are always the same.
@@ -44,6 +50,7 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
                 ->set_content_model_instance(Post::class)
                 ->set_data_source_adapter($this->get_data_source_adapter())
                 ->set_http_strategy($this->get_http_strategy())
+                ->set_has_more_strategy((new Updated_Date_Strategy())->set_updated_date(new DateTime()))
                 ->set_single_response_adapter(new Single_Response_Adapter())
                 ->set_batch_response_adapter(new Batch_Response_Adapter());
         });
@@ -64,7 +71,9 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
 
     public function build(Url $posts_base, Url $authors_base, Url $categories_base, Url $tags_base, DateTime $last_requested): static
     {
-        $strategy = (new Post_Index_Strategy($authors_base, $categories_base, $tags_base))->set_data_source($this->build_data_source($posts_base, $last_requested));
+        $strategy = (new Index_Strategy())->set_data_source($this->build_data_source($posts_base, $last_requested));
+        // SET UP LISTENERS.
+        (new Index_Post_Categories_Listener($this->id));
         return clone $this->set_index_strategy($strategy);
     }
 
