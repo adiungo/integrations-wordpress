@@ -10,7 +10,7 @@ use DateTime;
 use Underpin\Factories\Url;
 use Underpin\Registries\Param_Collection;
 
-class Rest_Strategy_Factory implements Has_Http_Strategy
+class Post_Rest_Strategy_Factory implements Has_Http_Strategy
 {
     use With_Http_Strategy;
 
