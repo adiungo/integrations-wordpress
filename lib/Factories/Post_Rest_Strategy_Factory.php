@@ -16,7 +16,7 @@ use Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter;
 use Adiungo\Integrations\WordPress\Adapters\Single_Response_Adapter;
 use Adiungo\Integrations\WordPress\Builders\Batch_Builder;
 use Adiungo\Integrations\WordPress\Builders\Request_Builder;
-use Adiungo\Integrations\WordPress\Listeners\Index_Post_Categories_Listener;
+use Adiungo\Integrations\WordPress\Listeners\Model_Binder;
 use Adiungo\Integrations\WordPress\Models\Post;
 use DateTime;
 use Underpin\Exceptions\Operation_Failed;
@@ -72,8 +72,15 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
     public function build(Url $posts_base, Url $authors_base, Url $categories_base, Url $tags_base, DateTime $last_requested): static
     {
         $strategy = (new Index_Strategy())->set_data_source($this->build_data_source($posts_base, $last_requested));
-        // SET UP LISTENERS.
-        (new Index_Post_Categories_Listener($this->id));
+        // SET UP Category Listener
+
+        Model_Binder::listen(Post::class,
+            (new Category_Rest_Strategy_Factory())
+                ->set_id($this->id . '_categories')
+                ->build($authors_base)
+        );
+
+
         return clone $this->set_index_strategy($strategy);
     }
 
@@ -83,6 +90,6 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
      */
     protected function build_data_source(Url $base, DateTime $last_requested): Rest
     {
-        return new Rest();
+        return (new Rest())->set_single_request_builder();
     }
 }
