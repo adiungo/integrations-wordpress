@@ -3,8 +3,10 @@
 namespace Adiungo\Integrations\WordPress\Factories;
 
 use Adiungo\Core\Factories\Adapters\Data_Source_Adapter;
+use Adiungo\Core\Factories\Category;
 use Adiungo\Core\Factories\Data_Sources\Rest;
 use Adiungo\Core\Factories\Index_Strategy;
+use Adiungo\Core\Factories\Tag;
 use Adiungo\Core\Factories\Updated_Date_Strategy;
 use Adiungo\Core\Interfaces\Has_Http_Strategy;
 use Adiungo\Core\Interfaces\Has_Index_Strategy;
@@ -21,6 +23,7 @@ use Underpin\Exceptions\Validation_Failed;
 use Underpin\Factories\Registry_Items\Param;
 use Underpin\Factories\Request;
 use Underpin\Factories\Url;
+use Underpin\Helpers\Array_Helper;
 use Underpin\Registries\Param_Collection;
 use Underpin\Traits\With_Object_Cache;
 
@@ -63,7 +66,19 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
      */
     protected function build_data_source_adapter(): Data_Source_Adapter
     {
-        return new Data_Source_Adapter();
+        $adapt_date_callback = fn(string $value) => DateTime::createFromFormat(DATE_ATOM, $value);
+
+        return (new Data_Source_Adapter())
+            ->set_content_model_instance(Post::class)
+            ->map_field('id', 'set_id', Types::Integer)
+            ->map_field('link', 'set_origin', fn(string $origin) => Url::from($origin))
+            ->map_field('content.rendered', 'set_content', Types::String)
+            ->map_field('excerpt.rendered', 'set_excerpt', Types::String)
+            ->map_field('title.rendered', 'set_name', Types::String)
+            ->map_field('modified_gmt', 'set_updated_date', $adapt_date_callback)
+            ->map_field('categories', 'add_categories', fn(array $categories) => Array_Helper::reduce($categories, fn(int $id) => (new Category())->set_id($id), []))
+            ->map_field('tags', 'add_tags', fn(array $tags) => Array_Helper::reduce($tags, fn(int $id) => (new Tag())->set_id($id), []))
+            ->map_field('date_gmt', 'set_created_date', $adapt_date_callback);
     }
 
     /**
@@ -129,7 +144,7 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
     protected function build_batch_request(Url $base, ?Param_Collection $batch_query_params = null): Request
     {
         if ($batch_query_params instanceof Param_Collection) {
-            $batch_query_params->each(fn (Param $param) => $this->maybe_set_param($base, $param));
+            $batch_query_params->each(fn(Param $param) => $this->maybe_set_param($base, $param));
         }
 
         // Set the order and order by params.
