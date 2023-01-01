@@ -102,6 +102,7 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
 
         $date = new DateTime();
 
+        /** @var Updated_Date_Strategy $result */
         $result = $this->call_inaccessible_method($instance, 'build_has_more_strategy', $date);
 
         $this->assertSame($date, $result->get_updated_date());
@@ -120,6 +121,7 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
 
         $base = Url::from('foo.com');
 
+        /** @var Request $result **/
         $result = $this->call_inaccessible_method($instance, 'build_single_request', $base);
 
         $this->assertSame($result->get_url(), $base);
@@ -185,6 +187,7 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
             ->shouldAllowMockingProtectedMethods()
             ->makePartial();
 
+        /** @var Request $result **/
         $result = $this->call_inaccessible_method($instance, 'build_batch_request', $base, $batch_query_params);
 
         $url = $result->get_url();

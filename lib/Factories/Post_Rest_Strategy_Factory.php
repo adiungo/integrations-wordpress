@@ -97,7 +97,7 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
     protected function build_batch_request(Url $base, ?Param_Collection $batch_query_params = null): Request
     {
         if ($batch_query_params instanceof Param_Collection) {
-            $batch_query_params->each(fn(Param $param) => $this->maybe_set_param($base, $param));
+            $batch_query_params->each(fn (Param $param) => $this->maybe_set_param($base, $param));
         }
 
         // Set the order and order by params.
