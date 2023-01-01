@@ -92,6 +92,22 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
     }
 
     /**
+     * @covers \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::build_has_more_strategy
+     * @return void
+     * @throws ReflectionException|Url_Exception
+     */
+    public function test_can_build_has_more_strategy(): void
+    {
+        $instance = Mockery::mock(Post_Rest_Strategy_Factory::class)->makePartial();
+
+        $date = new DateTime();
+
+        $result = $this->call_inaccessible_method($instance, 'build_has_more_strategy', $date);
+
+        $this->assertSame($date, $result->get_updated_date());
+    }
+
+    /**
      * @covers \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::build_single_request
      * @return void
      * @throws ReflectionException|Url_Exception
