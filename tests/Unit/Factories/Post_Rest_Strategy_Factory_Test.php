@@ -2,9 +2,13 @@
 
 namespace Adiungo\Integrations\WordPress\Tests\Unit\Factories;
 
+use Adiungo\Core\Factories\Adapters\Data_Source_Adapter;
 use Adiungo\Core\Factories\Data_Sources\Rest;
 use Adiungo\Core\Factories\Updated_Date_Strategy;
+use Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter;
+use Adiungo\Integrations\WordPress\Adapters\Single_Response_Adapter;
 use Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory;
+use Adiungo\Integrations\WordPress\Models\Post;
 use Adiungo\Tests\Test_Case;
 use Adiungo\Tests\Traits\With_Inaccessible_Methods;
 use DateTime;
@@ -28,10 +32,52 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
     /**
      * @covers \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::get_instance_template
      * @return void
+     * @throws ReflectionException
      */
     public function test_can_get_instance_template(): void
     {
-        $this->markTestIncomplete();
+        $instance = Mockery::mock(Post_Rest_Strategy_Factory::class)->makePartial()->shouldAllowMockingProtectedMethods();
+        $data_source_adapter = new Data_Source_Adapter();
+
+        $instance->allows('build_data_source_adapter')->andReturn($data_source_adapter);
+
+        $rest = Mockery::mock(Rest::class);
+
+        $rest->expects('set_content_model_instance')
+            ->with(Post::class)
+            ->andReturn($rest);
+
+        $rest->expects('set_data_source_adapter')
+            ->with($data_source_adapter)
+            ->andReturn($rest);
+
+        $rest->expects('set_single_response_adapter')
+            ->withArgs(fn ($arg) => $arg instanceof Single_Response_Adapter)
+            ->andReturn($rest);
+
+        $rest->expects('set_batch_response_adapter')
+            ->withArgs(fn ($arg) => $arg instanceof Batch_Response_Adapter)
+            ->andReturn($rest);
+
+
+        $instance->allows('get_rest_instance')->andReturn($rest);
+
+        $this->call_inaccessible_method($instance, 'get_instance_template');
+    }
+
+    /**
+     * @covers \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::get_rest_instance
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function test_can_get_rest_instance(): void
+    {
+        $instance = Mockery::mock(Post_Rest_Strategy_Factory::class)->makePartial();
+
+        $result = $this->call_inaccessible_method($instance, 'get_rest_instance');
+
+        $this->assertInstanceOf(Rest::class, $result);
     }
 
     /**
@@ -121,7 +167,7 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
 
         $base = Url::from('foo.com');
 
-        /** @var Request $result **/
+        /** @var Request $result * */
         $result = $this->call_inaccessible_method($instance, 'build_single_request', $base);
 
         $this->assertSame($result->get_url(), $base);
@@ -187,7 +233,7 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
             ->shouldAllowMockingProtectedMethods()
             ->makePartial();
 
-        /** @var Request $result **/
+        /** @var Request $result * */
         $result = $this->call_inaccessible_method($instance, 'build_batch_request', $base, $batch_query_params);
 
         $url = $result->get_url();

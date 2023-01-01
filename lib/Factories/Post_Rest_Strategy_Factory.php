@@ -2,6 +2,7 @@
 
 namespace Adiungo\Integrations\WordPress\Factories;
 
+use Adiungo\Core\Factories\Adapters\Data_Source_Adapter;
 use Adiungo\Core\Factories\Data_Sources\Rest;
 use Adiungo\Core\Factories\Index_Strategy;
 use Adiungo\Core\Factories\Updated_Date_Strategy;
@@ -9,6 +10,9 @@ use Adiungo\Core\Interfaces\Has_Http_Strategy;
 use Adiungo\Core\Interfaces\Has_Index_Strategy;
 use Adiungo\Core\Traits\With_Http_Strategy;
 use Adiungo\Core\Traits\With_Index_Strategy;
+use Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter;
+use Adiungo\Integrations\WordPress\Adapters\Single_Response_Adapter;
+use Adiungo\Integrations\WordPress\Models\Post;
 use DateTime;
 use Underpin\Enums\Types;
 use Underpin\Exceptions\Operation_Failed;
@@ -18,11 +22,23 @@ use Underpin\Factories\Registry_Items\Param;
 use Underpin\Factories\Request;
 use Underpin\Factories\Url;
 use Underpin\Registries\Param_Collection;
+use Underpin\Traits\With_Object_Cache;
 
 class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strategy
 {
     use With_Http_Strategy;
     use With_Index_Strategy;
+    use With_Object_Cache;
+
+    /**
+     * Fetches an instance of the rest class.
+     *
+     * @return Rest
+     */
+    protected function get_rest_instance(): Rest
+    {
+        return new Rest();
+    }
 
     /**
      * Assembles the items specific to this integration that are always the same.
@@ -31,7 +47,23 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
      */
     protected function get_instance_template(): Rest
     {
-        return new Rest();
+        return clone $this->load_from_cache('template', function () {
+            return $this->get_rest_instance()
+                ->set_content_model_instance(Post::class)
+                ->set_data_source_adapter($this->build_data_source_adapter())
+                ->set_single_response_adapter(new Single_Response_Adapter())
+                ->set_batch_response_adapter(new Batch_Response_Adapter());
+        });
+    }
+
+    /**
+     * Builds the data source adapter for posts.
+     *
+     * @return Data_Source_Adapter
+     */
+    protected function build_data_source_adapter(): Data_Source_Adapter
+    {
+        return new Data_Source_Adapter();
     }
 
     /**
