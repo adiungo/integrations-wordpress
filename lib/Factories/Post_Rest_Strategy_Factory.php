@@ -3,8 +3,10 @@
 namespace Adiungo\Integrations\WordPress\Factories;
 
 use Adiungo\Core\Factories\Adapters\Data_Source_Adapter;
+use Adiungo\Core\Factories\Category;
 use Adiungo\Core\Factories\Data_Sources\Rest;
 use Adiungo\Core\Factories\Index_Strategy;
+use Adiungo\Core\Factories\Tag;
 use Adiungo\Core\Factories\Updated_Date_Strategy;
 use Adiungo\Core\Interfaces\Has_Http_Strategy;
 use Adiungo\Core\Interfaces\Has_Index_Strategy;
@@ -21,6 +23,8 @@ use Underpin\Exceptions\Validation_Failed;
 use Underpin\Factories\Registry_Items\Param;
 use Underpin\Factories\Request;
 use Underpin\Factories\Url;
+use Underpin\Helpers\Array_Helper;
+use Underpin\Helpers\String_Helper;
 use Underpin\Registries\Param_Collection;
 use Underpin\Traits\With_Object_Cache;
 
@@ -60,10 +64,40 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
      * Builds the data source adapter for posts.
      *
      * @return Data_Source_Adapter
+     * @throws Operation_Failed
      */
     protected function build_data_source_adapter(): Data_Source_Adapter
     {
-        return new Data_Source_Adapter();
+        return (new Data_Source_Adapter())
+            ->set_content_model_instance(Post::class)
+            ->map_field('id', 'set_id', Types::Integer)
+            ->map_field('link', 'set_origin', fn (string $origin) => Url::from($origin))
+            ->map_field('content.rendered', 'set_content', Types::String)
+            ->map_field('excerpt.rendered', 'set_excerpt', Types::String)
+            ->map_field('title.rendered', 'set_name', Types::String)
+            ->map_field('modified_gmt', 'set_updated_date', fn (string $value) => $this->adapt_date($value))
+            ->map_field('categories', 'add_categories', fn (array $categories) => Array_Helper::map($categories, fn (int $id) => (new WordPress_Category())->set_remote_id($id)))
+            ->map_field('tags', 'add_tags', fn (array $tags) => Array_Helper::map($tags, fn (int $id) => (new WordPress_Tag())->set_remote_id($id)))
+            ->map_field('date_gmt', 'set_published_date', fn (string $value) => $this->adapt_date($value));
+    }
+
+    /**
+     * Adapts the date into the specified format.
+     *
+     * @param string $value
+     * @return DateTime
+     * @throws Operation_Failed
+     */
+    protected function adapt_date(string $value): DateTime
+    {
+        // If the string doesn't include a timezone, assume GMT.
+        if (!str_contains($value, '+')) {
+            $value = String_Helper::append($value, '+00:00');
+        }
+
+        $result = DateTime::createFromFormat(DATE_ATOM, $value);
+
+        return $result ?: throw new Operation_Failed('Could not create date');
     }
 
     /**
