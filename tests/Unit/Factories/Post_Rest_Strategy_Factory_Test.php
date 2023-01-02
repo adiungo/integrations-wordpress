@@ -10,6 +10,8 @@ use Adiungo\Core\Factories\Updated_Date_Strategy;
 use Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter;
 use Adiungo\Integrations\WordPress\Adapters\Single_Response_Adapter;
 use Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory;
+use Adiungo\Integrations\WordPress\Factories\WordPress_Category;
+use Adiungo\Integrations\WordPress\Factories\WordPress_Tag;
 use Adiungo\Integrations\WordPress\Models\Post;
 use Adiungo\Tests\Test_Case;
 use Adiungo\Tests\Traits\With_Inaccessible_Methods;
@@ -295,19 +297,21 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
     public function provider_can_build_data_source_adapter(): Generator
     {
         $published = DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+00:00');
-        if(!$published){
+        if (!$published) {
             throw new Exception('invalid date');
         }
+
         $updated = DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:04:56+00:00');
-        if(!$updated){
+        if (!$updated) {
             throw new Exception('invalid date');
         }
+
         yield 'basic adaptation' => [
             (new Post())
                 ->set_id(1)
                 ->set_origin(Url::from('https://www.foo.bar'))
-                ->add_categories((new Category())->set_id(4), (new Category())->set_id(5), (new Category())->set_id(6))
-                ->add_tags((new Tag())->set_id(1), (new Tag())->set_id(2), (new Tag())->set_id(3))
+                ->add_tags((new WordPress_Tag())->set_remote_id(1), (new WordPress_Tag())->set_remote_id(2), (new WordPress_Tag())->set_remote_id(3))
+                ->add_categories((new WordPress_Category())->set_remote_id(4), (new WordPress_Category())->set_remote_id(5), (new WordPress_Category())->set_remote_id(6))
                 ->set_published_date($published)
                 ->set_updated_date($updated)
                 ->set_name('title baz')

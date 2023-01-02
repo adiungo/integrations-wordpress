@@ -76,8 +76,8 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
             ->map_field('excerpt.rendered', 'set_excerpt', Types::String)
             ->map_field('title.rendered', 'set_name', Types::String)
             ->map_field('modified_gmt', 'set_updated_date', fn (string $value) => $this->adapt_date($value))
-            ->map_field('categories', 'add_categories', fn (array $categories) => Array_Helper::map($categories, fn (int $id) => (new Category())->set_id($id)))
-            ->map_field('tags', 'add_tags', fn (array $tags) => Array_Helper::map($tags, fn (int $id) => (new Tag())->set_id($id)))
+            ->map_field('categories', 'add_categories', fn (array $categories) => Array_Helper::map($categories, fn (int $id) => (new WordPress_Category())->set_remote_id($id)))
+            ->map_field('tags', 'add_tags', fn (array $tags) => Array_Helper::map($tags, fn (int $id) => (new WordPress_Tag())->set_remote_id($id)))
             ->map_field('date_gmt', 'set_published_date', fn (string $value) => $this->adapt_date($value));
     }
 

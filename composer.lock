@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "adiungo/core",
-            "version": "0.1.5",
+            "version": "0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/adiungo/core.git",
-                "reference": "72242ee89274927a00feca2000105fa4f5cb19c1"
+                "reference": "30d45c9361d1be6f7d49c75975a6f39c3e6bcc96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/adiungo/core/zipball/72242ee89274927a00feca2000105fa4f5cb19c1",
-                "reference": "72242ee89274927a00feca2000105fa4f5cb19c1",
+                "url": "https://api.github.com/repos/adiungo/core/zipball/30d45c9361d1be6f7d49c75975a6f39c3e6bcc96",
+                "reference": "30d45c9361d1be6f7d49c75975a6f39c3e6bcc96",
                 "shasum": ""
             },
             "require": {
@@ -59,7 +59,7 @@
                 "source": "https://github.com/adiungo/core/releases",
                 "wiki": "https://github.com/adiungo/core/wiki"
             },
-            "time": "2023-01-02T11:53:48+00:00"
+            "time": "2023-01-02T15:45:34+00:00"
         },
         {
             "name": "composer/installers",
