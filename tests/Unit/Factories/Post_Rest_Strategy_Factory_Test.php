@@ -3,7 +3,9 @@
 namespace Adiungo\Integrations\WordPress\Tests\Unit\Factories;
 
 use Adiungo\Core\Factories\Adapters\Data_Source_Adapter;
+use Adiungo\Core\Factories\Category;
 use Adiungo\Core\Factories\Data_Sources\Rest;
+use Adiungo\Core\Factories\Tag;
 use Adiungo\Core\Factories\Updated_Date_Strategy;
 use Adiungo\Integrations\WordPress\Adapters\Batch_Response_Adapter;
 use Adiungo\Integrations\WordPress\Adapters\Single_Response_Adapter;
@@ -23,6 +25,7 @@ use Underpin\Exceptions\Validation_Failed;
 use Underpin\Factories\Registry_Items\Param;
 use Underpin\Factories\Request;
 use Underpin\Factories\Url;
+use Underpin\Helpers\Array_Helper;
 use Underpin\Registries\Param_Collection;
 
 class Post_Rest_Strategy_Factory_Test extends Test_Case
@@ -52,11 +55,11 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
             ->andReturn($rest);
 
         $rest->expects('set_single_response_adapter')
-            ->withArgs(fn ($arg) => $arg instanceof Single_Response_Adapter)
+            ->withArgs(fn($arg) => $arg instanceof Single_Response_Adapter)
             ->andReturn($rest);
 
         $rest->expects('set_batch_response_adapter')
-            ->withArgs(fn ($arg) => $arg instanceof Batch_Response_Adapter)
+            ->withArgs(fn($arg) => $arg instanceof Batch_Response_Adapter)
             ->andReturn($rest);
 
 
@@ -265,5 +268,103 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
             new Url(),
             null
         ];
+    }
+
+    /**
+     * @covers       \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::build_data_source_adapter
+     * @param Post $expected
+     * @param array $input
+     * @return void
+     * @throws Operation_Failed
+     * @throws ReflectionException
+     * @dataProvider provider_can_build_data_source_adapter
+     */
+    public function test_can_build_data_source_adapter(Post $expected, array $input): void
+    {
+        /** @var Data_Source_Adapter $adapter */
+        $adapter = $this->call_inaccessible_method(new Post_Rest_Strategy_Factory(), 'build_data_source_adapter');
+        $this->assertEquals($expected, $adapter->convert_to_model($input));
+    }
+
+    public function provider_can_build_data_source_adapter(): Generator
+    {
+        yield 'basic adaptation' => [
+            (new Post())
+                ->set_id(1)
+                ->set_origin(Url::from('https://www.foo.bar'))
+                ->add_categories((new Category())->set_id(4), (new Category())->set_id(5), (new Category())->set_id(6))
+                ->add_tags((new Tag())->set_id(1), (new Tag())->set_id(2), (new Tag())->set_id(3))
+                ->set_published_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+00:00'))
+                ->set_updated_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:04:56+00:00'))
+                ->set_name('title baz')
+                ->set_content('content foo')
+                ->set_excerpt('excerpt bar'),
+            [
+                'content' => [
+                    'rendered' => 'content foo'
+                ],
+                'excerpt' => [
+                    'rendered' => 'excerpt bar'
+                ],
+                'title' => [
+                    'rendered' => 'title baz'
+                ],
+                'modified_gmt' => '2023-01-01T22:04:56',
+                'date_gmt' => '2023-01-01T22:03:52',
+                'tags' => [1, 2, 3],
+                'categories' => [4, 5, 6],
+                'link' => 'https://www.foo.bar',
+                'id' => 1
+            ]
+        ];
+        yield 'no tags or categories' => [
+            (new Post())
+                ->set_id(1)
+                ->set_origin(Url::from('https://www.foo.bar'))
+                ->set_published_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+00:00'))
+                ->set_updated_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:04:56+00:00'))
+                ->set_name('title baz')
+                ->set_content('content foo')
+                ->set_excerpt('excerpt bar'),
+            [
+                'content' => [
+                    'rendered' => 'content foo'
+                ],
+                'excerpt' => [
+                    'rendered' => 'excerpt bar'
+                ],
+                'title' => [
+                    'rendered' => 'title baz'
+                ],
+                'modified_gmt' => '2023-01-01T22:04:56',
+                'date_gmt' => '2023-01-01T22:03:52',
+                'tags' => [],
+                'categories' => [],
+                'link' => 'https://www.foo.bar',
+                'id' => 1
+            ]
+        ];
+    }
+
+    /**
+     * @covers       \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::adapt_date
+     *
+     * @param DateTime $expected
+     * @param string $input
+     * @return void
+     * @dataProvider provider_adapt_date
+     */
+    public function test_can_adapt_date(DateTime $expected, string $input): void
+    {
+        $result = $this->call_inaccessible_method(new Post_Rest_Strategy_Factory(), 'adapt_date', $input);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @see test_can_adapt_date */
+    public function provider_adapt_date(): Generator
+    {
+        yield 'with timezone uses timezone' => [DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+05:00'), '2023-01-01T22:03:52+05:00'];
+        yield 'without timezone sets GMT' => [DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+00:00'), '2023-01-01T22:03:52'];
     }
 }

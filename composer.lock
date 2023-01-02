@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "adiungo/core",
-            "version": "0.1.3",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/adiungo/core.git",
-                "reference": "b90db6ab14c6e71c13268ba3a2f885aec40a15b6"
+                "reference": "72242ee89274927a00feca2000105fa4f5cb19c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/adiungo/core/zipball/b90db6ab14c6e71c13268ba3a2f885aec40a15b6",
-                "reference": "b90db6ab14c6e71c13268ba3a2f885aec40a15b6",
+                "url": "https://api.github.com/repos/adiungo/core/zipball/72242ee89274927a00feca2000105fa4f5cb19c1",
+                "reference": "72242ee89274927a00feca2000105fa4f5cb19c1",
                 "shasum": ""
             },
             "require": {
@@ -59,7 +59,7 @@
                 "source": "https://github.com/adiungo/core/releases",
                 "wiki": "https://github.com/adiungo/core/wiki"
             },
-            "time": "2022-12-18T16:00:59+00:00"
+            "time": "2023-01-02T11:53:48+00:00"
         },
         {
             "name": "composer/installers",
@@ -4397,5 +4397,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }

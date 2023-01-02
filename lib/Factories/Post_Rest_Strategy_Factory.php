@@ -24,6 +24,7 @@ use Underpin\Factories\Registry_Items\Param;
 use Underpin\Factories\Request;
 use Underpin\Factories\Url;
 use Underpin\Helpers\Array_Helper;
+use Underpin\Helpers\String_Helper;
 use Underpin\Registries\Param_Collection;
 use Underpin\Traits\With_Object_Cache;
 
@@ -63,11 +64,10 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
      * Builds the data source adapter for posts.
      *
      * @return Data_Source_Adapter
+     * @throws Operation_Failed
      */
     protected function build_data_source_adapter(): Data_Source_Adapter
     {
-        $adapt_date_callback = fn(string $value) => DateTime::createFromFormat(DATE_ATOM, $value);
-
         return (new Data_Source_Adapter())
             ->set_content_model_instance(Post::class)
             ->map_field('id', 'set_id', Types::Integer)
@@ -75,10 +75,25 @@ class Post_Rest_Strategy_Factory implements Has_Http_Strategy, Has_Index_Strateg
             ->map_field('content.rendered', 'set_content', Types::String)
             ->map_field('excerpt.rendered', 'set_excerpt', Types::String)
             ->map_field('title.rendered', 'set_name', Types::String)
-            ->map_field('modified_gmt', 'set_updated_date', $adapt_date_callback)
-            ->map_field('categories', 'add_categories', fn(array $categories) => Array_Helper::reduce($categories, fn(int $id) => (new Category())->set_id($id), []))
-            ->map_field('tags', 'add_tags', fn(array $tags) => Array_Helper::reduce($tags, fn(int $id) => (new Tag())->set_id($id), []))
-            ->map_field('date_gmt', 'set_created_date', $adapt_date_callback);
+            ->map_field('modified_gmt', 'set_updated_date', fn(string $value) => $this->adapt_date($value))
+            ->map_field('categories', 'add_categories', fn(array $categories) => Array_Helper::map($categories, fn(int $id) => (new Category())->set_id($id)))
+            ->map_field('tags', 'add_tags', fn(array $tags) => Array_Helper::map($tags, fn(int $id) => (new Tag())->set_id($id)))
+            ->map_field('date_gmt', 'set_published_date', fn(string $value) => $this->adapt_date($value));
+    }
+
+    /**
+     * Adapts the date into the specified format.
+     *
+     * @param string $value
+     * @return DateTime
+     */
+    protected function adapt_date(string $value): DateTime
+    {
+        // If the string doesn't include a timezone, assume GMT.
+        if (!str_contains($value, '+')) {
+            $value = String_Helper::append($value, '+00:00');
+        }
+        return DateTime::createFromFormat(DATE_ATOM, $value);
     }
 
     /**
