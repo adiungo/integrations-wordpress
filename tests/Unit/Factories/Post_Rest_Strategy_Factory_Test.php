@@ -14,6 +14,7 @@ use Adiungo\Integrations\WordPress\Models\Post;
 use Adiungo\Tests\Test_Case;
 use Adiungo\Tests\Traits\With_Inaccessible_Methods;
 use DateTime;
+use Exception;
 use Generator;
 use Mockery;
 use ReflectionException;
@@ -55,11 +56,11 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
             ->andReturn($rest);
 
         $rest->expects('set_single_response_adapter')
-            ->withArgs(fn($arg) => $arg instanceof Single_Response_Adapter)
+            ->withArgs(fn ($arg) => $arg instanceof Single_Response_Adapter)
             ->andReturn($rest);
 
         $rest->expects('set_batch_response_adapter')
-            ->withArgs(fn($arg) => $arg instanceof Batch_Response_Adapter)
+            ->withArgs(fn ($arg) => $arg instanceof Batch_Response_Adapter)
             ->andReturn($rest);
 
 
@@ -273,7 +274,7 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
     /**
      * @covers       \Adiungo\Integrations\WordPress\Factories\Post_Rest_Strategy_Factory::build_data_source_adapter
      * @param Post $expected
-     * @param array $input
+     * @param mixed[] $input
      * @return void
      * @throws Operation_Failed
      * @throws ReflectionException
@@ -286,16 +287,29 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
         $this->assertEquals($expected, $adapter->convert_to_model($input));
     }
 
+    /**
+     * @return Generator
+     * @throws Operation_Failed
+     * @throws Url_Exception
+     */
     public function provider_can_build_data_source_adapter(): Generator
     {
+        $published = DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+00:00');
+        if(!$published){
+            throw new Exception('invalid date');
+        }
+        $updated = DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:04:56+00:00');
+        if(!$updated){
+            throw new Exception('invalid date');
+        }
         yield 'basic adaptation' => [
             (new Post())
                 ->set_id(1)
                 ->set_origin(Url::from('https://www.foo.bar'))
                 ->add_categories((new Category())->set_id(4), (new Category())->set_id(5), (new Category())->set_id(6))
                 ->add_tags((new Tag())->set_id(1), (new Tag())->set_id(2), (new Tag())->set_id(3))
-                ->set_published_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+00:00'))
-                ->set_updated_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:04:56+00:00'))
+                ->set_published_date($published)
+                ->set_updated_date($updated)
                 ->set_name('title baz')
                 ->set_content('content foo')
                 ->set_excerpt('excerpt bar'),
@@ -321,8 +335,8 @@ class Post_Rest_Strategy_Factory_Test extends Test_Case
             (new Post())
                 ->set_id(1)
                 ->set_origin(Url::from('https://www.foo.bar'))
-                ->set_published_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:03:52+00:00'))
-                ->set_updated_date(DateTime::createFromFormat(DATE_ATOM, '2023-01-01T22:04:56+00:00'))
+                ->set_published_date($published)
+                ->set_updated_date($updated)
                 ->set_name('title baz')
                 ->set_content('content foo')
                 ->set_excerpt('excerpt bar'),
